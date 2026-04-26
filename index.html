@@ -1,0 +1,1079 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>eBay Agents Swarm - MacBook Contest Report</title>
+  <meta name="description" content="Contest report for eBay Agents Swarm: a live eBay production system evolving into a Matrix-style AI operations team.">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #101114;
+      --panel: #181b20;
+      --panel-2: #20242b;
+      --text: #f3f0e8;
+      --muted: #b8b2a8;
+      --line: #343944;
+      --green: #22c55e;
+      --green-soft: #123f2a;
+      --cyan: #38bdf8;
+      --cyan-soft: #123346;
+      --gold: #f5b942;
+      --gold-soft: #463511;
+      --coral: #fb7185;
+      --coral-soft: #48212a;
+      --violet: #a78bfa;
+      --violet-soft: #2d2447;
+      --max: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top left, rgba(34, 197, 94, 0.14), transparent 28rem),
+        linear-gradient(135deg, #101114 0%, #16120f 44%, #111418 100%);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.58;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(16, 17, 20, 0.88);
+      backdrop-filter: blur(14px);
+    }
+
+    .nav {
+      width: min(var(--max), calc(100% - 32px));
+      min-height: 62px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+
+    .brand-mark {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(34, 197, 94, 0.55);
+      border-radius: 8px;
+      color: var(--green);
+      background: var(--green-soft);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-weight: 800;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    main {
+      overflow: hidden;
+    }
+
+    .hero {
+      min-height: calc(100vh - 62px);
+      display: grid;
+      align-items: center;
+      padding: 72px 0 42px;
+    }
+
+    .hero-inner,
+    .section-inner {
+      width: min(var(--max), calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(420px, 0.86fr);
+      gap: 44px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      color: #d7fbe5;
+      font-size: 0.92rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .pulse {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--green);
+      box-shadow: 0 0 0 7px rgba(34, 197, 94, 0.14);
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      letter-spacing: 0;
+      line-height: 1.05;
+    }
+
+    h1 {
+      max-width: 760px;
+      font-size: clamp(3.6rem, 8vw, 7.4rem);
+      font-weight: 900;
+    }
+
+    .hero-copy {
+      max-width: 720px;
+      margin: 26px 0 0;
+      color: var(--muted);
+      font-size: clamp(1.08rem, 2vw, 1.32rem);
+    }
+
+    .hero-copy strong {
+      color: var(--text);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 32px;
+    }
+
+    .button {
+      min-height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 18px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 8px;
+      background: #f3f0e8;
+      color: #111418;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .button.secondary {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text);
+    }
+
+    .status-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 28px;
+    }
+
+    .status {
+      padding: 8px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      color: #ddd6cc;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .hero-visual {
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      background: linear-gradient(180deg, rgba(32, 36, 43, 0.96), rgba(18, 20, 24, 0.96));
+      box-shadow: 0 34px 90px rgba(0, 0, 0, 0.35);
+      overflow: hidden;
+    }
+
+    .terminal-head {
+      height: 42px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.18);
+    }
+
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 999px;
+      background: var(--coral);
+    }
+
+    .dot:nth-child(2) {
+      background: var(--gold);
+    }
+
+    .dot:nth-child(3) {
+      background: var(--green);
+    }
+
+    .terminal {
+      padding: 22px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.92rem;
+      color: #d6ffe4;
+    }
+
+    .terminal-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .terminal-line:last-child {
+      border-bottom: 0;
+    }
+
+    .ok {
+      color: var(--green);
+    }
+
+    .warn {
+      color: var(--gold);
+    }
+
+    section {
+      padding: 82px 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .section-heading {
+      max-width: 820px;
+      margin-bottom: 34px;
+    }
+
+    h2 {
+      font-size: clamp(2rem, 4vw, 3.6rem);
+      font-weight: 900;
+    }
+
+    .lead {
+      margin: 16px 0 0;
+      color: var(--muted);
+      font-size: 1.1rem;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .quote {
+      padding: 28px;
+      border-left: 4px solid var(--green);
+      border-radius: 8px;
+      background: rgba(34, 197, 94, 0.1);
+      font-size: 1.2rem;
+      font-weight: 800;
+    }
+
+    .bullets {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .bullets li {
+      padding: 16px 18px;
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      color: #ded8ce;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .compare-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .compare-card {
+      min-height: 360px;
+      padding: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .compare-card.after {
+      border-color: rgba(34, 197, 94, 0.4);
+      background: rgba(34, 197, 94, 0.09);
+    }
+
+    .compare-card h3 {
+      margin-bottom: 18px;
+      font-size: 1.55rem;
+    }
+
+    .compare-card ul {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+
+    .process-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .step {
+      min-height: 170px;
+      padding: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+
+    .step-num {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 14px;
+      border-radius: 8px;
+      background: var(--green-soft);
+      color: #bbf7d0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-weight: 900;
+    }
+
+    .step strong {
+      display: block;
+      margin-bottom: 7px;
+    }
+
+    .step span {
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .card {
+      min-height: 178px;
+      padding: 22px;
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+
+    .card h3 {
+      margin-bottom: 10px;
+      font-size: 1.16rem;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .tag {
+      display: inline-flex;
+      margin-bottom: 14px;
+      padding: 5px 8px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .ready {
+      background: var(--green-soft);
+      color: #bbf7d0;
+    }
+
+    .runway {
+      background: var(--gold-soft);
+      color: #fde68a;
+    }
+
+    .future {
+      background: var(--cyan-soft);
+      color: #bae6fd;
+    }
+
+    .strategy {
+      background: var(--violet-soft);
+      color: #ddd6fe;
+    }
+
+    .architecture {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(220px, 0.72fr) minmax(0, 1fr);
+      gap: 18px;
+      align-items: center;
+    }
+
+    .stack {
+      display: grid;
+      gap: 12px;
+    }
+
+    .node {
+      padding: 15px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      font-weight: 800;
+    }
+
+    .node span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .center-node {
+      padding: 28px 20px;
+      border: 1px solid rgba(34, 197, 94, 0.55);
+      border-radius: 8px;
+      background: rgba(18, 63, 42, 0.78);
+      text-align: center;
+      box-shadow: 0 0 42px rgba(34, 197, 94, 0.16);
+    }
+
+    .center-node strong {
+      display: block;
+      font-size: 1.55rem;
+      line-height: 1.12;
+    }
+
+    .center-node span {
+      display: block;
+      margin-top: 10px;
+      color: #c8f8d8;
+    }
+
+    .lane {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .lane-step {
+      min-height: 92px;
+      display: grid;
+      place-items: center;
+      padding: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      background: var(--panel-2);
+      color: #f5e8c4;
+      text-align: center;
+      font-weight: 850;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 14px;
+    }
+
+    .event {
+      display: grid;
+      grid-template-columns: 132px minmax(0, 1fr);
+      gap: 18px;
+      padding: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.045);
+    }
+
+    .date {
+      color: var(--gold);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-weight: 800;
+    }
+
+    .event strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .event p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .detail-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .detail {
+      display: grid;
+      grid-template-columns: 72px minmax(0, 1fr);
+      gap: 18px;
+      padding: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.045);
+    }
+
+    .detail b {
+      color: var(--green);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    .detail h3 {
+      margin-bottom: 8px;
+      font-size: 1.16rem;
+    }
+
+    .detail p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .proof {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .proof a {
+      display: block;
+      padding: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      text-decoration: none;
+      color: #e8e2d8;
+      font-weight: 800;
+    }
+
+    .proof a span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .footer {
+      padding: 38px 0 46px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--muted);
+    }
+
+    code {
+      padding: 0.18em 0.35em;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #f7f0d0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.92em;
+    }
+
+    @media (max-width: 920px) {
+      .nav {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 14px 0;
+      }
+
+      .nav-links {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
+
+      .hero {
+        min-height: auto;
+        padding-top: 48px;
+      }
+
+      .hero-grid,
+      .split,
+      .architecture,
+      .compare-grid,
+      .proof {
+        grid-template-columns: 1fr;
+      }
+
+      .grid,
+      .process-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 620px) {
+      h1 {
+        font-size: 3.15rem;
+      }
+
+      section {
+        padding: 58px 0;
+      }
+
+      .grid,
+      .process-grid,
+      .lane {
+        grid-template-columns: 1fr;
+      }
+
+      .event,
+      .detail {
+        grid-template-columns: 1fr;
+      }
+
+      .terminal {
+        padding: 16px;
+        font-size: 0.82rem;
+      }
+
+      .terminal-line {
+        flex-direction: column;
+        gap: 2px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="#top" aria-label="eBay Agents Swarm">
+        <span class="brand-mark">M</span>
+        <span>eBay Agents Swarm</span>
+      </a>
+      <div class="nav-links">
+        <a href="#twist">Twist</a>
+        <a href="#result">Было / стало</a>
+        <a href="#process">Process</a>
+        <a href="#agents">Agents</a>
+        <a href="#safety">Safety</a>
+        <a href="#deep-process">Details</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-inner">
+        <div class="hero-grid">
+          <div>
+            <div class="eyebrow"><span class="pulse"></span> MacBook 15 contest report</div>
+            <h1 id="hero-title">eBay Agents Swarm</h1>
+            <p class="hero-copy">
+              Не учебная песочница, а живой eBay production: Telegram ops bot,
+              VPS, eBay API, Google Sheets, supplier checkout и агентная команда
+              поверх реального бизнеса.
+            </p>
+            <p class="hero-copy">
+              <strong>Метод Никиты - БОМБА:</strong> он дал agent-thinking,
+              роли, gates и идею упаковки. Наш twist - применить это к живому
+              production, где ошибки стоят денег.
+            </p>
+            <div class="actions">
+              <a class="button" href="#result">Было / стало</a>
+              <a class="button secondary" href="#process">Краткий процесс</a>
+              <a class="button secondary" href="#deep-process">Развёрнутый вариант</a>
+            </div>
+            <div class="status-strip" aria-label="Project status">
+              <span class="status">Morpheus live in prod</span>
+              <span class="status">228 tests after hotfix</span>
+              <span class="status">Plan 3 Verifier in progress</span>
+              <span class="status">Human-in-loop gates</span>
+            </div>
+          </div>
+
+          <div class="hero-visual" aria-label="Production status console">
+            <div class="terminal-head">
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+            </div>
+            <div class="terminal">
+              <div class="terminal-line"><span>telegram_ops_bot</span><strong class="ok">active</strong></div>
+              <div class="terminal-line"><span>@Ebaybyer_bot</span><strong class="ok">ops entry</strong></div>
+              <div class="terminal-line"><span>MORPHEUS_ENABLED</span><strong class="ok">true</strong></div>
+              <div class="terminal-line"><span>Plan 1 foundation</span><strong class="ok">done</strong></div>
+              <div class="terminal-line"><span>Plan 2 Morpheus</span><strong class="ok">deployed</strong></div>
+              <div class="terminal-line"><span>Plan 3 Verifier</span><strong class="warn">worktree</strong></div>
+              <div class="terminal-line"><span>full-auto checkout</span><strong class="warn">after gates</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="result" aria-labelledby="result-title">
+      <div class="section-inner">
+        <div class="section-heading">
+          <h2 id="result-title">Было -> стало</h2>
+          <p class="lead">
+            Главная демонстрация результата: из набора рабочих production-скриптов
+            получается управляемая агентная операционная система.
+          </p>
+        </div>
+        <div class="compare-grid">
+          <article class="compare-card">
+            <span class="tag runway">Было</span>
+            <h3>Рабочий eBay production</h3>
+            <ul>
+              <li>Telegram bot уже принимал операторские решения и CVV approval.</li>
+              <li>Закупки, трекинги, supplier checkout и Google Sheets жили как отдельные контуры.</li>
+              <li>Знание о системе держалось в коде, логах, памяти пользователя и отдельных заметках.</li>
+              <li>Новые правки требовали много ручного контекста и осторожности.</li>
+              <li>AI-агентов ещё не было внутри операционного workflow.</li>
+            </ul>
+          </article>
+          <article class="compare-card after">
+            <span class="tag ready">Стало</span>
+            <h3>eBay Agents Swarm</h3>
+            <ul>
+              <li>Morpheus стал Telegram-координатором с памятью и feature flags.</li>
+              <li>Neo / Programmer получил безопасный протокол правок: claim, TDD, tests, release.</li>
+              <li>Oracle описывает стратегию агентной команды и не даёт плодить лишние роли.</li>
+              <li>Seraph / Verifier идёт в worktree как checkout guard перед CVV.</li>
+              <li>Появились gates: manual -> parallel -> auto-escalate -> full-auto.</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="twist" aria-labelledby="twist-title">
+      <div class="section-inner">
+        <div class="section-heading">
+          <h2 id="twist-title">The Twist</h2>
+          <p class="lead">
+            Мы не начали с пустого проекта. Сначала был работающий eBay-контур,
+            потом поверх него появился агентный слой.
+          </p>
+        </div>
+        <div class="split">
+          <div class="quote">
+            Production path: взять существующую eBay-автоматизацию и превратить
+            её в агентную операционную систему.
+          </div>
+          <ul class="bullets">
+            <li><strong>Brownfield, не greenfield.</strong> Уже есть закупки, трекинги, Google Sheets, Gmail IMAP и supplier checkout.</li>
+            <li><strong>Один рабочий Telegram ops-интерфейс.</strong> Morpheus встроен в существующий бот, а не живёт рядом отдельной игрушкой.</li>
+            <li><strong>Риск реальных денег.</strong> Поэтому rollout идёт через feature flags, human gate и calibration.</li>
+            <li><strong>Доказуемость.</strong> Git commits, plans, tests, AGENT_ACTIVITY, TODO guard и build log показывают путь, а не только финальную картинку.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="process" aria-labelledby="process-title">
+      <div class="section-inner">
+        <div class="section-heading">
+          <h2 id="process-title">Кратко: как шли по шагам</h2>
+          <p class="lead">
+            Версия для быстрого просмотра: шесть шагов от живого бизнеса к
+            агентной системе, без длинной технической расшифровки.
+          </p>
+        </div>
+        <div class="process-grid">
+          <div class="step"><div class="step-num">01</div><strong>Зафиксировали production</strong><span>Описали правила, секреты, GitHub/VPS workflow и границы безопасности.</span></div>
+          <div class="step"><div class="step-num">02</div><strong>Стабилизировали базу</strong><span>Закрыли quota, tracking, manual stock и реальные edge cases до агентов.</span></div>
+          <div class="step"><div class="step-num">03</div><strong>Спроектировали MVP</strong><span>Выбрали Morpheus, Programmer и Verifier как первый безопасный слой.</span></div>
+          <div class="step"><div class="step-num">04</div><strong>Собрали foundation</strong><span>Добавили agent definitions, contracts, safety modules и тесты.</span></div>
+          <div class="step"><div class="step-num">05</div><strong>Вывели Morpheus</strong><span>Встроили координатора в Telegram ops bot, память, /panic, /why и flags.</span></div>
+          <div class="step"><div class="step-num">06</div><strong>Упаковали результат</strong><span>Сделали страницу, build log и публичный contest report без приватных данных.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="architecture" aria-labelledby="architecture-title">
+      <div class="section-inner">
+        <div class="section-heading">
+          <h2 id="architecture-title">Architecture</h2>
+          <p class="lead">
+            Morpheus становится командным центром, который соединяет Telegram,
+            production state и специализированных агентов.
+          </p>
+        </div>
+        <div class="architecture">
+          <div class="stack">
+            <div class="node">eBay API <span>orders, listings, tracking</span></div>
+            <div class="node">Google Sheets <span>операционная база GE1 / PE12</span></div>
+            <div class="node">Gmail IMAP <span>tracking and purchase confirmations</span></div>
+            <div class="node">Supplier checkout <span>DHM, CPAPX, ResmedDirect</span></div>
+          </div>
+          <div class="center-node">
+            <strong>Morpheus Command Center</strong>
+            <span>Telegram coordinator + memory + routing</span>
+          </div>
+          <div class="stack">
+            <div class="node">Neo / Programmer <span>safe code changes</span></div>
+            <div class="node">Seraph / Verifier <span>checkout guard before CVV</span></div>
+            <div class="node">Oracle <span>agent strategy</span></div>
+            <div class="node">Smith / Trinity / Link <span>next production layers</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="agents" aria-labelledby="agents-title">
+      <div class="section-inner">
+        <div class="section-heading">
+          <h2 id="agents-title">Agent Team</h2>
+          <p class="lead">
+            Не один универсальный помощник, а команда ролей с разной
+            ответственностью и разным уровнем доступа.
+          </p>
+        </div>
+        <div class="grid">
+          <article class="card">
+            <span class="tag runway">Runway</span>
+            <h3>Morpheus</h3>
+            <p>Главный координатор в Telegram: отвечает, читает контекст, зовёт других агентов и ведёт память.</p>
+          </article>
+          <article class="card">
+            <span class="tag ready">Ready</span>
+            <h3>Neo / Programmer</h3>
+            <p>Кодовый агент с claim, TDD, тестами, safety hook и запретом на секреты.</p>
+          </article>
+          <article class="card">
+            <span class="tag strategy">Ready</span>
+            <h3>Oracle</h3>
+            <p>Стратегический архитектор: какие агенты нужны, какие преждевременны, где риски.</p>
+          </article>
+          <article class="card">
+            <span class="tag runway">In progress</span>
+            <h3>Seraph / Verifier</h3>
+            <p>Проверяет цену, маржу, купон и адрес перед CVV. Сначала parallel, потом gates.</p>
+          </article>
+          <article class="card">
+            <span class="tag future">Next</span>
+            <h3>Smith</h3>
+            <p>Watchdog по зависшим заказам, tracking, API quota, stock и margin.</p>
+          </article>
+          <article class="card">
+            <span class="tag future">Next</span>
+            <h3>Trinity / Architect / Niobe / Link</h3>
+            <p>Закупочный runtime, listings policy, customer support и daily dispatch.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="safety" aria-labelledby="safety-title">
+      <div class="section-inner">
+        <div class="section-heading">
+          <h2 id="safety-title">Safety Gates</h2>
+          <p class="lead">
+            Самая важная часть конкурсной истории: мы не включаем full-auto там,
+            где ошибка может стоить денег.
+          </p>
+        </div>
+        <div class="lane" aria-label="Verifier rollout stages">
+          <div class="lane-step">manual</div>
+          <div class="lane-step">parallel</div>
+          <div class="lane-step">auto-escalate</div>
+          <div class="lane-step">full-auto</div>
+        </div>
+        <div class="grid" style="margin-top: 16px;">
+          <article class="card">
+            <h3><code>PANIC.flag</code></h3>
+            <p>Один аварийный стоп для опасных сценариев и повторных отказов.</p>
+          </article>
+          <article class="card">
+            <h3>Feature flags</h3>
+            <p><code>MORPHEUS_ENABLED</code> и <code>VERIFIER_ENABLED</code> включаются управляемо.</p>
+          </article>
+          <article class="card">
+            <h3>AGENT_ACTIVITY</h3>
+            <p>Каждый агент заявляет scope до правок, чтобы не ломать параллельную работу.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="timeline" aria-labelledby="timeline-title">
+      <div class="section-inner">
+        <div class="section-heading">
+          <h2 id="timeline-title">Build Log</h2>
+          <p class="lead">
+            Путь от production-скриптов к агентной системе зафиксирован как
+            инженерный журнал, а не как слайд после факта.
+          </p>
+        </div>
+        <div class="timeline">
+          <div class="event">
+            <div class="date">2026-04-24</div>
+            <div><strong>Production rules</strong><p>Описаны CLAUDE.md, AGENT_ACTIVITY, VPS/local/GitHub workflow, secrets policy и deploy rules.</p></div>
+          </div>
+          <div class="event">
+            <div class="date">2026-04-24</div>
+            <div><strong>Stabilization before agents</strong><p>Quota fixes, tracking parser fixes, manual stock flow и real ReviseItem для кнопки mstock_up.</p></div>
+          </div>
+          <div class="event">
+            <div class="date">2026-04-25</div>
+            <div><strong>Agents Swarm MVP</strong><p>Спека Morpheus + Verifier + Programmer и staged rollout через Plan 1/2/3.</p></div>
+          </div>
+          <div class="event">
+            <div class="date">2026-04-25</div>
+            <div><strong>Foundation + Matrix roles</strong><p>Programmer/Neo, Oracle, contracts, tests, safety modules и карта будущей команды.</p></div>
+          </div>
+          <div class="event">
+            <div class="date">2026-04-26</div>
+            <div><strong>Morpheus in prod runway</strong><p>Telegram handler, memory, feature flags, /panic, /why, health check и real callback hotfix.</p></div>
+          </div>
+          <div class="event">
+            <div class="date">Now</div>
+            <div><strong>Public contest page</strong><p>Отчёт упакован в GitHub Pages landing page для подачи на розыгрыш MacBook 15.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="deep-process" aria-labelledby="deep-process-title">
+      <div class="section-inner">
+        <div class="section-heading">
+          <h2 id="deep-process-title">Развёрнутый процесс</h2>
+          <p class="lead">
+            Для тех, кто хочет понять не только результат, но и инженерный путь:
+            что делали, зачем и чем это доказано.
+          </p>
+        </div>
+        <div class="detail-list">
+          <article class="detail">
+            <b>01</b>
+            <div>
+              <h3>Сначала описали реальный контур</h3>
+              <p>Создали правила работы для агентов: где prod, где GitHub, где secrets, как делать claim, как не конфликтовать с параллельными сессиями.</p>
+            </div>
+          </article>
+          <article class="detail">
+            <b>02</b>
+            <div>
+              <h3>Починили базовые production-боли</h3>
+              <p>До внедрения AI закрыли API quota fixes, tracking parser, manual stock buttons и проблему, где кнопка могла говорить об успехе без реального eBay ReviseItem.</p>
+            </div>
+          </article>
+          <article class="detail">
+            <b>03</b>
+            <div>
+              <h3>Сузили идею до безопасного MVP</h3>
+              <p>Вместо десяти агентов сразу выбрали три роли: Morpheus как координатор, Programmer как безопасный кодовый агент, Verifier как будущая защита checkout.</p>
+            </div>
+          </article>
+          <article class="detail">
+            <b>04</b>
+            <div>
+              <h3>Разложили работу через superpowers-планы</h3>
+              <p>Plan 1, Plan 2, Plan 3 и эта public-pages задача оформлены как пошаговые планы: цель, критерии готовности, задачи, проверки и release.</p>
+            </div>
+          </article>
+          <article class="detail">
+            <b>05</b>
+            <div>
+              <h3>Добавили агентную инфраструктуру</h3>
+              <p>Foundation дал prompts, contracts, sdk wrapper, panic flag, verifier log schema, safety hook и тесты. Это база, на которой можно безопасно растить роли.</p>
+            </div>
+          </article>
+          <article class="detail">
+            <b>06</b>
+            <div>
+              <h3>Встроили Morpheus в существующий Telegram bot</h3>
+              <p>Morpheus не отдельная игрушка. Он живёт в текущем ops-интерфейсе, читает контекст, отвечает пользователю и остаётся под feature flags.</p>
+            </div>
+          </article>
+          <article class="detail">
+            <b>07</b>
+            <div>
+              <h3>Поймали и закрыли настоящий rollout bug</h3>
+              <p>Inline-кнопка feature flags нашла реальный callback edge case. Его закрыли тестами, atomic env update и release-коммитом. Это хороший proof, что проект живой.</p>
+            </div>
+          </article>
+          <article class="detail">
+            <b>08</b>
+            <div>
+              <h3>Подготовили следующий safety layer</h3>
+              <p>Verifier уже идёт отдельным worktree: сначала parallel-режим, статистика совпадений, затем auto-escalate и только потом full-auto.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="proof" aria-labelledby="proof-title">
+      <div class="section-inner">
+        <div class="section-heading">
+          <h2 id="proof-title">Proof Pack</h2>
+          <p class="lead">
+            Публичная версия не раскрывает приватный production-репозиторий, но
+            показывает проверяемые артефакты и логику движения.
+          </p>
+        </div>
+        <div class="proof">
+          <a href="#result">Before / after <span>Самый короткий способ понять, что изменилось.</span></a>
+          <a href="#process">Short process <span>Шесть шагов для быстрого просмотра.</span></a>
+          <a href="#deep-process">Detailed process <span>Развёрнутая версия: что делали и почему.</span></a>
+          <a href="#safety">Safety gates <span>Почему full-auto включается только после калибровки.</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="section-inner">
+      eBay Agents Swarm - contest report for the MacBook 15 giveaway. Built from
+      a live eBay automation production system, not a toy demo.
+    </div>
+  </footer>
+</body>
+</html>
